@@ -146,6 +146,8 @@ def write_artifacts(db_path: Path, out_dir: Path, run_date: date | None = None) 
             json.dump(deltas, f, ensure_ascii=False)
 
     index_path = out_dir / "index.sqlite"
+    # Checkpoint WAL so the copied file is a complete, standalone snapshot.
+    conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
     shutil.copy2(db_path, index_path)
     manifest["files"] = {
         "index_sqlite_bytes": index_path.stat().st_size,

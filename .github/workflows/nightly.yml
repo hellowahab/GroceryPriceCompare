@@ -28,6 +28,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install --no-cache-dir ./ingest
 
+      - name: Seed DB from previous artifact (keep all stores)
+        run: |
+          mkdir -p data
+          if curl -sfL -o data/gpc.db "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/gh-pages/index.sqlite"; then
+            echo "seeded from previous artifact"
+          else
+            echo "no previous artifact yet; starting fresh"
+          fi
+
       - name: Blink full catalogs (cheap bulk API)
         run: python -m gpc.cli run --store al_jadeed,chase_up,bin_hashim --export data/artifacts
 

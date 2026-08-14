@@ -54,7 +54,7 @@ Validation notes:
                                                     ▼
                     ┌────────────────────────────────────────────────────┐
                     │  Flutter app: local SQLite cache                   │
-                    │  first-run: download index.sqlite                  │
+                    │  first-run: manifest + products/{store}.json seed  │
                     │  subsequent: manifest + deltas merge               │
                     │  alerts computed client-side from local history   │
                     └────────────────────────────────────────────────────┘
@@ -72,6 +72,12 @@ Validation notes:
   throttling (5–8 concurrent requests for page-based crawls).
 - **No Playwright by default.** All sources are plain HTTP. Playwright is the
   documented fallback if a store starts client-rendering.
+- Each run first **seeds the DB from the previous artifact** (downloads
+  `gh-pages/index.sqlite`); if unavailable it starts fresh. Because the
+  `gh-pages` branch is force-orphaned each publish, the seed is what keeps
+  every store's data present in every publish — nightly publishes blink stores
+  *plus* the seeded Metro/Bin Hashim crawls, and the weekly full crawl publishes
+  Bin Hashim/Metro *plus* the seeded blink catalogs.
 
 ### 3.2 Artifact & hosting
 
@@ -88,6 +94,8 @@ Validation notes:
   ```
 - GitHub Pages is the default host (no extra account). Cloudflare Pages is an
   equivalent alternative via direct upload (`cloudflare/pages-action`) if preferred.
+- `index.sqlite` is WAL-checkpointed before copying so the published snapshot
+  is complete and standalone (safe to reuse as the next run's seed DB).
 - Cost: **$0**. GitHub Actions free tier (2,000 min/mo), Pages static hosting.
 
 ### 3.3 Data size control
@@ -197,8 +205,17 @@ ingest/                         # Phase 1 ingestion pipeline (Python)
       blink.py                  # Blink Co. (Al Jadeed, Bin Hashim, Chase Up)
       metro.py                  # Metro (Sitecore Next.js)
 data/                           # gitignored: gpc.db + artifacts working copy
-app/                            # Phase 3 Flutter app (later)
+app/                            # Phase 3 Flutter app
+  pubspec.yaml / analysis_options.yaml
+  lib/main.dart                 # app shell, watchlist, compare, browse
+  lib/src/models.dart           # Manifest / Offer / WatchItem / PriceDrop
+  lib/src/matching.dart         # store names + token-Jaccard name matching
+  lib/src/local_db.dart         # sqflite cache, delta apply, drop alerts
+  lib/src/sync_service.dart     # GitHub Pages HTTP sync (manifest/products/deltas)
+  lib/src/state.dart            # ChangeNotifier app state
+  test/                         # unit tests (matching/models/local_db/sync)
+  README.md                     # bootstrap: flutter create . --platforms android
 .github/workflows/
-  nightly.yml                   # blink bulk catalogs + watchlist refresh
-  weekly-full-crawl.yml         # Bin Hashim + Metro full crawls
+  nightly.yml                   # blink bulk catalogs + watchlist refresh (seed DB first)
+  weekly.yml                    # Bin Hashim + Metro full crawls (seed DB first)
 ```
