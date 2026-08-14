@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gpc-ingest"
+version = "0.1.0"
+description = "Grocery Price Compare — store ingestion pipeline (adapters, normalizer, SQLite, artifact export)"
+requires-python = ">=3.10"
+dependencies = ["httpx>=0.27"]
+
+[project.scripts]
+gpc = "gpc.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

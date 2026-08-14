@@ -1,0 +1,22 @@
+# runtime data / artifacts
+data/
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# flutter (when added)
+app/.dart_tool/
+app/build/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+
+# misc
+.idea/
+.vscode/
+*.log
