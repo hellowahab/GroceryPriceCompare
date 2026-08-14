@@ -1,5 +1,5 @@
 # runtime data / artifacts
-data/
+/data/
 
 # python
 __pycache__/
