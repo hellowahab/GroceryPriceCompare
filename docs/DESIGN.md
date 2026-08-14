@@ -182,7 +182,8 @@ watchlist(id, product_id, qty, target_price, enabled)
 docs/DESIGN.md                  # this document
 ingest/                         # Phase 1 ingestion pipeline (Python)
   pyproject.toml
-  config/stores.json            # store/platform/branch configuration
+  src/gpc/
+    data/stores.json             # store/platform/branch configuration (bundled package data)
   src/gpc/
     config.py                   # load stores.json
     model.py                    # normalized Offer dataclass

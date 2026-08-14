@@ -56,5 +56,5 @@ def default_config_path() -> Path:
     env = os.environ.get("GPC_CONFIG")
     if env:
         return Path(env)
-    # ingest/src/gpc/config.py -> ingest/config/stores.json
-    return Path(__file__).resolve().parents[2] / "config" / "stores.json"
+    # bundled package data (works for both editable and wheel installs)
+    return Path(__file__).resolve().parent / "data" / "stores.json"
