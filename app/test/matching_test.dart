@@ -47,11 +47,11 @@ void main() {
   test('exact name match ranks first', () {
     final offers = [
       _offer(1, 'Lays Masala 50g', price: 60),
-      _offer(2, 'Lays Masala 50g', price: 55, store: 'chase_up'),
+      _offer(2, 'Lays Masala 100g', price: 55, store: 'chase_up'),
     ];
     final matches = matchOffersByName('lays masala 50g', offers);
-    expect(matches.length, 2);
-    expect(matches.first.price, 55);
+    expect(matches, hasLength(2));
+    expect(matches.first.name, 'Lays Masala 50g');
   });
 
   test('sortedByPrice puts cheapest first, nulls last', () {

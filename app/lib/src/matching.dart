@@ -1,4 +1,4 @@
-import '../models.dart';
+import 'models.dart';
 
 const Map<String, String> storeNames = {
   'al_jadeed': 'Al Jadeed',
@@ -40,8 +40,11 @@ List<Offer> matchOffersByName(String query, List<Offer> all,
     var s = jaccard(qt, ot);
     final exact = offer.name.toLowerCase() == query.toLowerCase();
     final containsAll = qt.every(ot.contains);
-    if (exact) s = 1.0;
-    else if (containsAll) s = s * 1.25;
+    if (exact) {
+      s = 1.0;
+    } else if (containsAll) {
+      s = s * 1.25;
+    }
     if (s >= threshold) scored.add((score: s, offer: offer));
   }
   scored.sort((a, b) => b.score.compareTo(a.score));

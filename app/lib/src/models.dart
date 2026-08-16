@@ -103,7 +103,9 @@ class Offer {
       ean: j['ean'] as String?,
       slug: j['slug'] as String?,
       url: j['url'] as String?,
-      inStock: j['in_stock'] == 1 || j['in_stock'] == true,
+      inStock: j['in_stock'] == null ||
+          j['in_stock'] == 1 ||
+          j['in_stock'] == true,
       price: (j['price'] as num?)?.toDouble(),
       basePrice: (j['base_price'] as num?)?.toDouble(),
       discountPrice: (j['discount_price'] as num?)?.toDouble(),

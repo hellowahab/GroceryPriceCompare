@@ -61,7 +61,7 @@ class SyncService {
           historyDate: firstSync ? manifest.date.toIso8601String().substring(0, 10) : null);
 
       if (!firstSync) {
-        final since = DateTime.tryParse(lastSynced!) ?? manifest.date;
+        final since = DateTime.tryParse(lastSynced) ?? manifest.date;
         var day = since.add(const Duration(days: 1));
         while (!day.isAfter(manifest.date)) {
           final deltas = await fetchDeltas(store.code, day);

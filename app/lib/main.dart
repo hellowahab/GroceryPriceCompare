@@ -427,9 +427,6 @@ class _OfferTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final perUnit = offer.qty != null && offer.qty! > 0 && offer.price != null
-        ? offer.price! / offer.qty!
-        : null;
     return ListTile(
       leading: rank != null
           ? CircleAvatar(child: Text('$rank'))
@@ -438,10 +435,8 @@ class _OfferTile extends StatelessWidget {
       subtitle: Text(
         [
           storeName(offer.storeCode),
-          if (offer.qty != null) 'qty ${offer.qty}',
           if (offer.basePrice != null && offer.basePrice! > 0)
             'disc ${_fmt(offer.basePrice! - offer.price!)}',
-          if (perUnit != null) 'Rs ${perUnit.toStringAsFixed(2)}/unit',
         ].join(' · '),
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
@@ -452,7 +447,7 @@ class _OfferTile extends StatelessWidget {
         final item = WatchItem(
           id: null,
           itemName: offer.name,
-          qty: offer.qty ?? 1,
+          qty: 1,
           targetPrice: offer.price,
           enabled: true,
           createdAt: DateTime.now().toIso8601String(),
