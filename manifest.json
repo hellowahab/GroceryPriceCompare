@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-22T04:24:11.074250+00:00",
+  "date": "2026-08-22",
+  "stores": {
+    "al_jadeed": {
+      "offers": 17020,
+      "with_price": 17020,
+      "changed": 0,
+      "new": 17020,
+      "file": "products/al_jadeed.json"
+    },
+    "chase_up": {
+      "offers": 7698,
+      "with_price": 7698,
+      "changed": 1,
+      "new": 7697,
+      "file": "products/chase_up.json"
+    }
+  },
+  "files": {
+    "index_sqlite_bytes": 13328384,
+    "deltas_dir": "deltas/2026-08-22/"
+  }
+}
