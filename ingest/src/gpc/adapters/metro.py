@@ -13,7 +13,11 @@ import httpx
 
 from ..config import StoreCfg
 from ..model import Offer
-from ..normalize import offer_from_metro_repo
+from ..normalize import (
+    matches_any_term,
+    offer_from_metro_repo,
+    term_token_sets,
+)
 from .base import StoreAdapter
 from .blink import extract_next_data
 
@@ -68,3 +72,29 @@ class MetroAdapter(StoreAdapter):
         if not repo:
             return None
         return offer_from_metro_repo(repo, self.cfg.code, self.cfg.store_id or 0, fixed)
+
+    def search_catalog(self, terms: list[str]) -> Iterator[Offer]:
+        """Watchlist mode: fetch only sitemap products whose slug matches terms."""
+        term_sets = term_token_sets(terms)
+        if not term_sets:
+            return
+        matched = 0
+        for url in self._sitemap_urls():
+            fixed = _fix_url(url)
+            if not matches_any_term(fixed, term_sets):
+                continue
+            matched += 1
+            try:
+                r = self.http.get(fixed)
+                r.raise_for_status()
+                repo = self._parse_product(r.text)
+            except httpx.HTTPStatusError as exc:
+                if exc.response.status_code in (400, 403, 404, 405, 410):
+                    print(f"skip {fixed}: HTTP {exc.response.status_code}")
+                    continue
+                raise
+            if repo and repo.get("product_name"):
+                yield offer_from_metro_repo(
+                    repo, self.cfg.code, self.cfg.store_id or 0, fixed
+                )
+        print(f"{self.cfg.code}: {matched} sitemap URLs matched watch terms")

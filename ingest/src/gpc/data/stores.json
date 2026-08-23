@@ -20,6 +20,7 @@
       "rest_id": 55248,
       "app_name": "binhashimpharmacysupermarket",
       "menu_fetch": "bulk_or_sitemap",
+      "watch_terms": ["olpers milk", "tapal tea danedar"],
       "branches": [
         { "ext_id": "55203", "name": "Bin Hashim Gulistan-e-Johar", "city": "Karachi" }
       ]
@@ -42,6 +43,7 @@
       "platform": "metro",
       "base_url": "https://www.metro-online.pk",
       "store_id": 10,
+      "watch_terms": ["olpers milk", "tapal tea danedar"],
       "branches": []
     }
   ]

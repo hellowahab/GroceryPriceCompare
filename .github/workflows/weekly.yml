@@ -1,8 +1,8 @@
 name: weekly-full-crawl
 
 on:
-  schedule:
-    - cron: '0 5 * * 0'
+  # Manual only — the nightly watch-term targeted fetch keeps Bin Hashim +
+  # Metro fresh. Use this for an occasional complete re-crawl.
   workflow_dispatch: {}
 
 concurrency:
@@ -15,7 +15,7 @@ permissions:
 jobs:
   crawl:
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 350
     steps:
       - uses: actions/checkout@v4
 

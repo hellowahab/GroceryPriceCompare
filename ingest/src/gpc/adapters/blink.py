@@ -15,7 +15,12 @@ import httpx
 
 from ..config import StoreCfg
 from ..model import Offer
-from ..normalize import offer_from_blink_dish, offer_from_blink_ssr_product
+from ..normalize import (
+    matches_any_term,
+    offer_from_blink_dish,
+    offer_from_blink_ssr_product,
+    term_token_sets,
+)
 from .base import StoreAdapter
 
 _SITEMAP_RE = re.compile(r"<loc>(.*?)</loc>")
@@ -121,3 +126,29 @@ class BlinkAdapter(StoreAdapter):
         if not isinstance(prefetched, dict) or "name" not in prefetched:
             return None
         return offer_from_blink_ssr_product(prefetched, self.cfg.code, url)
+
+    def search_catalog(self, terms: list[str]) -> Iterator[Offer]:
+        """Watchlist mode: fetch only sitemap products whose slug matches terms.
+
+        Avoids the expensive full sitemap crawl — a handful of sitemap index
+        requests plus one request per matched product.
+        """
+        term_sets = term_token_sets(terms)
+        if not term_sets:
+            return
+        matched = 0
+        for url in self._sitemap_urls():
+            if not matches_any_term(url, term_sets):
+                continue
+            matched += 1
+            r = self.http.get(url, headers=self.headers)
+            r.raise_for_status()
+            data = extract_next_data(r.text)
+            prefetched = (
+                data.get("props", {}).get("pageProps", {}).get("prefetchedItem") or {}
+            ).get("data")
+            if isinstance(prefetched, list) and prefetched:
+                prefetched = prefetched[0]
+            if isinstance(prefetched, dict) and "name" in prefetched:
+                yield offer_from_blink_ssr_product(prefetched, self.cfg.code, url)
+        print(f"{self.cfg.code}: {matched} sitemap URLs matched watch terms")

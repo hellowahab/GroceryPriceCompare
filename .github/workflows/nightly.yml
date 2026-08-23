@@ -40,8 +40,8 @@ jobs:
       - name: Blink full catalogs (cheap bulk API)
         run: python -m gpc.cli run --store al_jadeed,chase_up,bin_hashim --export data/artifacts
 
-      - name: Watchlist refresh for crawl-based stores
-        run: python -m gpc.cli run --watchlist --store bin_hashim,metro --export data/artifacts || true
+      - name: Watch-term targeted fetch (Bin Hashim + Metro)
+        run: python -m gpc.cli run --watchlist --store bin_hashim,metro --export data/artifacts
 
       - name: Publish artifact to gh-pages
         uses: peaceiris/actions-gh-pages@v4

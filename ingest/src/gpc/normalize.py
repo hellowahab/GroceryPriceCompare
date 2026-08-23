@@ -167,3 +167,34 @@ def name_tokens(name: str) -> list[str]:
 def canonical_name(name: str) -> str:
     """Collapse whitespace, lowercase — used for product identity fallback."""
     return " ".join(_strip(name).lower().split())
+
+
+def slug_tokens(url: str) -> set[str]:
+    """Content tokens from the tail of a product URL (slug segments only).
+
+    Category path segments are excluded so a term like "olpers milk" cannot
+    match "olpers cream" just because it sits in the milk category.
+    """
+    from urllib.parse import urlsplit
+
+    segs = [s for s in urlsplit(url).path.split("/") if s]
+    toks: set[str] = set()
+    for seg in segs[-2:]:
+        toks.update(t for t in _WORD.findall(seg.lower()) if not t.isdigit())
+    return toks
+
+
+def term_token_sets(terms: list[str]) -> list[set[str]]:
+    """Tokenize watch terms; empty sets dropped, digits ignored."""
+    out = []
+    for term in terms:
+        ts = {t for t in name_tokens(term) if not t.isdigit()}
+        if ts:
+            out.append(ts)
+    return out
+
+
+def matches_any_term(url: str, term_sets: list[set[str]]) -> bool:
+    """True if the URL slug contains every token of any single watch term."""
+    st = slug_tokens(url)
+    return any(ts <= st for ts in term_sets)

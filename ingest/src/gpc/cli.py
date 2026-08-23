@@ -2,8 +2,8 @@
 
 Examples:
   python -m gpc.cli run --store al_jadeed,chase_up            # blink bulk (cheap)
-  python -m gpc.cli run --store bin_hashim,metro --full       # full crawls (weekly)
-  python -m gpc.cli run --watchlist --store bin_hashim,metro  # watchlist refresh
+  python -m gpc.cli run --watchlist --store bin_hashim,metro  # watch-term targeted fetch
+  python -m gpc.cli run --store bin_hashim,metro --full       # full crawls (manual)
   python -m gpc.cli export                                    # re-export artifacts
 """
 from __future__ import annotations
@@ -54,11 +54,19 @@ def cmd_run(args) -> int:
             adapter = _adapter_for(cfg)
             count = 0
             if args.watchlist:
-                for row in db.watchlist_offers(code):
-                    offer = adapter.fetch_product(row["url"])
-                    if offer:
+                search = getattr(adapter, "search_catalog", None)
+                if cfg.watch_terms and search:
+                    # Targeted fetch: only products matching configured watch terms.
+                    for offer in adapter.search_catalog(cfg.watch_terms):
                         db.upsert_offer(offer, batch_id)
                         count += 1
+                else:
+                    # Fallback: refresh previously stored watchlist URLs.
+                    for row in db.watchlist_offers(code):
+                        offer = adapter.fetch_product(row["url"])
+                        if offer:
+                            db.upsert_offer(offer, batch_id)
+                            count += 1
             else:
                 for offer in adapter.fetch_catalog(full=args.full):
                     db.upsert_offer(offer, batch_id)
@@ -96,7 +104,7 @@ def main(argv: list[str] | None = None) -> int:
     run.add_argument("--full", action="store_true",
                      help="allow expensive full crawls for sitemap-based stores")
     run.add_argument("--watchlist", action="store_true",
-                     help="refresh only watchlisted offers")
+                     help="fetch only products matching each store's watch_terms")
     run.add_argument("--db", default="data/gpc.db")
     run.add_argument("--export", help="artifact output dir (optional)")
     run.set_defaults(func=cmd_run)

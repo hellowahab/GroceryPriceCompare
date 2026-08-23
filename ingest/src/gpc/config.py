@@ -25,6 +25,7 @@ class StoreCfg:
     store_id: Optional[int] = None
     menu_fetch: str = "bulk"
     branches: list[BranchCfg] = field(default_factory=list)
+    watch_terms: list[str] = field(default_factory=list)
 
     def branch(self, ext_id: str) -> Optional[BranchCfg]:
         for b in self.branches:
@@ -47,6 +48,7 @@ def load_config(path: Optional[Path] = None) -> dict[str, StoreCfg]:
             app_name=s.get("app_name"),
             store_id=s.get("store_id"),
             menu_fetch=s.get("menu_fetch", "bulk"),
+            watch_terms=list(s.get("watch_terms", [])),
             branches=[BranchCfg(**b) for b in s.get("branches", [])],
         )
     return stores

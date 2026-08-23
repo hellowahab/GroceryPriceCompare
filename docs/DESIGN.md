@@ -64,8 +64,8 @@ Validation notes:
 
 | Workflow | Cron (UTC) | Work | Est. minutes/mo |
 |---|---|---|---|
-| `nightly` | `0 4 * * *` (~09:00 PKT) | Blink full catalogs (Al Jadeed, Chase Up, + Bin Hashim bulk retry) + watchlist-only refresh of Bin Hashim & Metro watchlist products | ~20–40 |
-| `weekly` | `0 5 * * 0` | Bin Hashim + Metro full sitemap crawls (~22k pages, throttled) | ~120–240 |
+| `nightly` | `0 4 * * *` (~09:00 PKT) | Blink full catalogs (Al Jadeed, Chase Up; Bin Hashim bulk retry) + watch-term targeted fetch for Bin Hashim & Metro (sitemap scan → fetch only items matching configured `watch_terms`) | ~10–20 |
+| `weekly` | manual only | Full Bin Hashim + Metro sitemap crawls — optional complete refresh (needs >4 h job timeout) | as used |
 | **Total** | | | ≤ **400 of 2,000 free** |
 
 - Runner: `ubuntu-latest`. Python 3.12, `httpx` with retries/backoff and polite
