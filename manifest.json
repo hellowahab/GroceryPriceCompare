@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-26T08:58:05.762766+00:00",
+  "date": "2026-09-26",
+  "stores": {
+    "al_jadeed": {
+      "offers": 17020,
+      "with_price": 17020,
+      "changed": 964,
+      "new": 16056,
+      "file": "products/al_jadeed.json"
+    },
+    "chase_up": {
+      "offers": 8677,
+      "with_price": 8677,
+      "changed": 4,
+      "new": 8673,
+      "file": "products/chase_up.json"
+    },
+    "bin_hashim": {
+      "offers": 74,
+      "with_price": 74,
+      "changed": 4,
+      "new": 70,
+      "file": "products/bin_hashim.json"
+    },
+    "metro": {
+      "offers": 22,
+      "with_price": 22,
+      "changed": 0,
+      "new": 22,
+      "file": "products/metro.json"
+    }
+  },
+  "files": {
+    "index_sqlite_bytes": 13914112,
+    "deltas_dir": "deltas/2026-09-26/"
+  }
+}
